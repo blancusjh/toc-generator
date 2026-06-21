@@ -1,5 +1,6 @@
 # Ignorar claves sensibles y compilados
 config.py
+.env
 __pycache__/
 *.pyc
 *.pyo
@@ -7,5 +8,11 @@ __pycache__/
 *.log
 
 # Archivos temporales
-#aux/
+aux/
+TOC_*.pdf
 
+# Local one-off descriptors and scripts
+apply_bacon_toc.py
+apply_latin_toc.py
+tocs/bacon-novum-organum.json
+tocs/francisci-instauratio-magna.json

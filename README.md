@@ -1,47 +1,48 @@
 # TOC Generator
 
-Extract and apply structured tables of contents (TOCs) to scanned PDFs using Gemini and PyMuPDF.
+Generate and embed structured PDF bookmarks from scanned tables of contents using Gemini and PyMuPDF.
 
-## Features
+## Requirements
 
-- Extract TOC pages from a PDF
-- Use Gemini 2.5 Flash to convert TOC images to structured data
-- Apply the TOC directly to the original PDF
-- Supports page offset and automatic "Content" marker
+- Python 3.10+
+- `pdftoppm` from Poppler (`brew install poppler` on macOS)
+- A Gemini API key in the `GOOGLE_API_KEY` environment variable
+
+Install the Python dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+export GOOGLE_API_KEY="your-api-key"
+```
 
 ## Usage
 
-1. Install dependencies:
+Create a descriptor based on [`tocs/example.json`](tocs/example.json):
 
-    ```bash
-    pip install google-generativeai pymupdf
-    ```
+```json
+{
+  "toc_pages": [3, 6],
+  "offset": 10,
+  "file_path": "/absolute/path/to/book.pdf"
+}
+```
 
-2. Create `config.py` with your API key:
+Then run:
 
-    ```python
-    GOOGLE_API_KEY = "your-api-key-here"
-    ```
+```bash
+python process_toc.py path/to/book.json
+```
 
-3. Create a JSON descriptor in `tocs/`:
+The pipeline renders the requested TOC pages into `aux/`, asks Gemini for structured bookmark data, and writes `TOC_<source name>.pdf` beside the source PDF. Use `--workdir` or `--output` to override those locations.
 
-    ```json
-    {
-      "toc_pages": [3, 6],
-      "offset": 10,
-      "file_path": "~/Books/book.pdf"
-    }
-    ```
+The source PDF is never modified.
 
-4. Run the pipeline:
+## Descriptor fields
 
-    ```bash
-    python process_toc.py
-    ```
+- `toc_pages`: inclusive `[first_page, last_page]` PDF page range containing the printed TOC.
+- `offset`: number added to each printed page number before creating PDF bookmarks.
+- `file_path`: absolute path to the source PDF. Keep personal paths in untracked descriptors.
 
-The result will be saved as `TOC_book.pdf`.
+## License
 
-## Notes
-
-- Requires `pdftoppm` (from poppler-utils)
-
+MIT. See [LICENSE](LICENSE).
